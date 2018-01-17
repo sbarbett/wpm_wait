@@ -1,0 +1,1 @@
+Methods for waiting for things using WebDriver in WPM.
