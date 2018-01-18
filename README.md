@@ -9,7 +9,7 @@ Just get the code into your script somehow. You can copy/paste it, download and 
 eval(openHttpClient().get('https://raw.githubusercontent.com/sbarbett/wpm_wait/master/src/Wait.js').getBody()+'');
 ```
 
-...or upload Wait.js directly to you WPM account and use include:
+...or upload Wait.js to your WPM account and use include:
 
 ```javascript
 include('Wait')
