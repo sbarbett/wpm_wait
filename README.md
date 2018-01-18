@@ -36,6 +36,8 @@ beginTransaction(function(tx) {
     wait.forElementPresent(By.id('lst-ib'));
     wait.forVisible(By.id('lst-ib'));
     wait.forTextPresent('Google Search');
+    driver.executeScript('window.alert("test");');
+    wait.forAlertPresent();
   });
 });
 ```

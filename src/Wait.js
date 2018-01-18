@@ -139,7 +139,7 @@ function Wait(d, t) {
    **********************************************************************************/
   this.forAlertPresent = function() {
     var driver = this.driver;
-    var nt = waitFor(function()) {
+    var nt = waitFor(function() {
       while (true) {
         try {
           driver.switchTo().alert();
