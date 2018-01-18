@@ -13,7 +13,7 @@ function Wait(d, t) {
    *   pattern of a WebDriver object. If 't' isn't an integer, it will try          *
    *   to convert it to one and throw an error if NaN.                              *
    **********************************************************************************/
-  if (typeof d === 'object') {
+  if (typeof d === 'object') { 
     // Use regex to make sure it appears to be a WebDriver object or error
     var r = /^WebmetricsWebDriver:\s.*\son\s.*\s\(.*\)/i;
     if (!r.test(d.toString())) {
