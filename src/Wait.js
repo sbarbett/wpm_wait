@@ -133,4 +133,26 @@ function Wait(d, t) {
       fail('WaitException: timed out waiting for text to be present: ' + t);
     }
   };
+  /**********************************************************************************
+   *   Wait for an alert to be present. Using a try...catch, try to switch to an    *
+   *   existing dialogue and return true, otherwise return false.                   *
+   **********************************************************************************/
+  this.forAlertPresent = function() {
+    var driver = this.driver;
+    var nt = waitFor(function()) {
+      while (true) {
+        try {
+          driver.switchTo().alert();
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+    }, this.timeout);
+    try {
+      assertTrue(nt);
+    } catch (e) {
+      fail('WaitException: timed out waiting for alert');
+    }
+  };
 }
