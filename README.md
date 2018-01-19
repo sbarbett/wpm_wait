@@ -3,41 +3,28 @@ Methods for waiting for things using WebDriver in WPM
 How to use
 ==========
 
-Just get the code into your script somehow. You can copy/paste it, download and eval directly from GitHub with:
+Just put the code into your script somehow. You can copy/paste, download and eval directly from GitHub with:
 
 ```javascript
-eval(openHttpClient().get('https://raw.githubusercontent.com/sbarbett/wpm_wait/master/src/Wait.js').getBody()+'');
+var c = openHttpClient();
+eval(c.get('https://raw.githubusercontent.com/sbarbett/wpm_wait/master/src/Wait.js').getBody()+'');
+eval(c.get('https://raw.githubusercontent.com/sbarbett/wpm_wait/master/src/WaitForElement.js').getBody()+'');
+eval(c.get('https://raw.githubusercontent.com/sbarbett/wpm_wait/master/src/WaitForText.js').getBody()+'');
+eval(c.get('https://raw.githubusercontent.com/sbarbett/wpm_wait/master/src/WaitForAlert.js').getBody()+'');
 ```
 
-...or upload Wait.js to your WPM account and use include:
+...or upload the files to your WPM account and use include:
 
 ```javascript
 include('Wait')
+include('WaitForElement')
+include('WaitForText')
+include('WaitForAlert')
 ```
 
-Instantiate using your active WebDriver instance and a timeout value in milliseconds.
+Instantiate a 'wait' object using your active WebDriver instance and a timeout value in milliseconds.
 
 ```javascript
 var driver = openBrowser();
 var wait = new Wait(driver, 30000);
-```
-
-Example test using Google:
-
-```javascript
-include('Wait');
-var driver = openBrowser();
-var wait = new Wait(driver, 30000)
-
-beginTransaction(function(tx) {
-  beginStep(function(step) {
-    driver.get('https://www.google.com');
-    wait.forPageToLoad();
-    wait.forElementPresent(By.id('lst-ib'));
-    wait.forVisible(By.id('lst-ib'));
-    wait.forTextPresent('Google Search');
-    driver.executeScript('window.alert("test");');
-    wait.forAlertPresent();
-  });
-});
 ```

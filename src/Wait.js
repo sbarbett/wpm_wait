@@ -37,6 +37,7 @@ function Wait(d, t) {
   }
   this.driver = d;
   this.timeout = t;
+
   /**********************************************************************************
    *   Wait for a page to be 'completed' loading. We consider this to be when the   *
    *   'ready state' property of the document is complete. You do this with         *
@@ -46,113 +47,36 @@ function Wait(d, t) {
   this.forPageToLoad = function() {
     var driver = this.driver;
     var nt = waitFor(function() {
-      // Check the document ready state
       return driver.executeScript('return document.readyState;').equals('complete');
     }, this.timeout);
-    // Using a try...catch for cleaner looking error messages
     try {
       assertTrue(nt);
     } catch (e) {
       fail('WaitException: timed out waiting for page to load');
     }
   };
-  /**********************************************************************************
-   *   Wait for an element to be attached to the DOM. Since WebDriver.findElement   *
-   *   will always produce an error if no element is found, we use the alternate    *
-   *   method WebDriver.findElements. This returns a list of all elements matching  *
-   *   the locator, or 0 if none are found. Once the element is present, the        *
-   *   return will be greater than zero, hence satisfying the wait condition.       *
-   **********************************************************************************/
-  this.forElementPresent = function(l) {
-    if (typeof l === 'object') {
-      // Test to see if the locator is valid, using the By mechanism
-      try {
-        this.driver.findElements(l);
-      } catch (e) {
-        fail('WaitException: object is not a valid locator: ' + l.toString());
-      }
+
+  // Subclasses
+  this.forElement = function(l) {
+    if (typeof l !== 'object') {
+      fail('WaitException: locator object is required')
+    }
+    return new WaitForElement(this.driver, this.timeout, l);
+  };
+
+  this.forText = function(x) {
+    if (typeof x === 'number') {
+      x = x.toString();
+    } else if (typeof x === 'string') {
+      x = x;
     } else {
-      fail('WaitException: locator object required');
+      fail('WaitException: a string is required');
     }
-    var driver = this.driver;
-    var nt = waitFor(function() {
-      return driver.findElements(l).size() > 0;
-    }, this.timeout);
-    try {
-      assertTrue(nt);
-    } catch (e) {
-      fail('WaitException: timed out waiting for element: ' + l.toString());
-    }
+    return new WaitForText(this.driver, this.timeout, x);
   };
-  /**********************************************************************************
-   *   Wait for an element to be displayed by using the WebElement.isDisplayed      *
-   *   method. Since this looks for a specific element using WebDriver.findElement, *
-   *   it will error immediately if the element isn't already in the DOM. Sometimes *
-   *   you may need to wait for an element to be attached, then wait for the page   *
-   *   to make it visible, depending on how a site is designed.                     *
-   **********************************************************************************/
-  this.forVisible = function(l) {
-    if (typeof l === 'object') {
-      // Test to see if it's a valid element
-      try {
-        this.driver.findElement(l);
-      } catch (e) {
-        fail('WaitException: unable to locate element: ' + l.toString());
-      }
-    } else {
-      fail('WaitException: locator object required');
-    }
-    var driver = this.driver;
-    var nt = waitFor(function() {
-      return driver.findElement(l).isDisplayed();
-    }, this.timeout);
-    try {
-      assertTrue(nt);
-    } catch (e) {
-      fail('WaitException: timed out waiting for element to be visible: ' + l.toString());
-    }
+
+  this.forAlert = function() {
+    return new WaitForAlert(this.driver, this.timeout);
   };
-  /**********************************************************************************
-   *   Check the source of the page for some text. Since this uses                  *
-   *   WebDriver.getPageSource it returns all content pre-rendered, including html  *
-   *   and its attributes. Another approach would be to store the body of the page  *
-   *   by tag name, then use WebElement.getText. WebElement.getText will only       *
-   *   return content that's displayed on the page after html is rendered.          *
-   **********************************************************************************/
-  this.forTextPresent = function(t) {
-    if (typeof t !== 'string') {
-      fail('WaitException: string of text required');
-    }
-    var driver = this.driver;
-    var nt = waitFor(function() {
-      return driver.getPageSource().contains(t);
-    }, this.timeout);
-    try {
-      assertTrue(nt);
-    } catch (e) {
-      fail('WaitException: timed out waiting for text to be present: ' + t);
-    }
-  };
-  /**********************************************************************************
-   *   Wait for an alert to be present. Using a try...catch, try to switch to an    *
-   *   existing dialogue and return true, otherwise return false.                   *
-   **********************************************************************************/
-  this.forAlertPresent = function() {
-    var driver = this.driver;
-    var nt = waitFor(function() {
-      while (true) {
-        try {
-          driver.switchTo().alert();
-          return true;
-        } catch (e) {
-          return false;
-        }
-      }
-    }, this.timeout);
-    try {
-      assertTrue(nt);
-    } catch (e) {
-      fail('WaitException: timed out waiting for alert');
-    }
-  };
+
 }
